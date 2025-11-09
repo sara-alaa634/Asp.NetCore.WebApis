@@ -4,12 +4,13 @@ using Ecommerce.Prisastance.Data.DataSeed;
 using Ecommerce.Prisastance.Data.DbContexts;
 using ECommerce.Web.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace ECommerce.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -34,8 +35,8 @@ namespace ECommerce.Web
 
             #region Data Seed
 
-            app.MigrateDb();
-            app.SeedDb();
+           await app.MigrateDbAsunc();  // check migration first then seed data 
+           await app.SeedDbAsync();
 
 
             #endregion

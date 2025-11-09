@@ -22,32 +22,32 @@ namespace Ecommerce.Prisastance.Data.DataSeed
         {
             _dbContext = dbContext;
         }
-        public void Intilize()
+        public async Task IntilizeAsync()
         {
             try
             {
-                var HasProducts=_dbContext.Products.Any();
-                var HasProductBrands=_dbContext.ProductBrands.Any();
-                var HasProductTypes=_dbContext.ProductTypes.Any();
+                var HasProducts=await _dbContext.Products.AnyAsync();
+                var HasProductBrands=await _dbContext.ProductBrands.AnyAsync();
+                var HasProductTypes=await _dbContext.ProductTypes.AnyAsync();
+
                 if(HasProducts && HasProductBrands && HasProductTypes )
                 {
                     return;
                 }
-
                
                 if (!HasProductBrands)
                 {
-                    SeedDataFromJson<ProductBrand,int>("brands.json", _dbContext.ProductBrands);
+                    await SeedDataFromJsonAsync<ProductBrand,int>("brands.json", _dbContext.ProductBrands);
                 }
                 if (!HasProductTypes)
                 {
-                    SeedDataFromJson<ProductType, int>("types.json", _dbContext.ProductTypes);
+                    await SeedDataFromJsonAsync<ProductType, int>("types.json", _dbContext.ProductTypes);
                 }
                 _dbContext.SaveChanges();
                 // 34an y3ml save lel brands wel types abl ma y3ml save lel products 34an fe 3ala2a benhom
                 if (!HasProducts)
                 {
-                    SeedDataFromJson<Product, int>("products.json", _dbContext.Products);
+                    await SeedDataFromJsonAsync<Product, int>("products.json", _dbContext.Products);
                 }
 
                 _dbContext.SaveChanges();
@@ -59,7 +59,7 @@ namespace Ecommerce.Prisastance.Data.DataSeed
             }   
         }
 
-        private void SeedDataFromJson<T,TKey>(string fileName , DbSet<T> dbset) where T:BaseEntity<TKey>
+        private async Task SeedDataFromJsonAsync<T,TKey>(string fileName , DbSet<T> dbset) where T:BaseEntity<TKey>
         {
             // FilePath
             //D:\Courses\Route Asp.net\videos\Web Api Asp.Net Core\ECommerce.Web\Ecommerce.Prisastance\Data\DataSeed\JsonFiles\
@@ -73,7 +73,7 @@ namespace Ecommerce.Prisastance.Data.DataSeed
                 var Data = JsonSerializer.Deserialize<List<T>>(DataStream);
                 if (Data is not null)
                 {
-                    dbset.AddRange(Data);
+                   await dbset.AddRangeAsync(Data);
                 }   
 
 

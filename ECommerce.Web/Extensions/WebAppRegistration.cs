@@ -7,25 +7,26 @@ namespace ECommerce.Web.Extensions
     public static class WebAppRegistration 
     {
         // this => as i told him go to webapplicaton class and add this method to it
-        public static WebApplication MigrateDb(this WebApplication app)
+        public static  async Task<WebApplication> MigrateDbAsunc(this WebApplication app)
         {
-            using var Scope = app.Services.CreateScope();
+            await using var Scope = app.Services.CreateAsyncScope();
             var dbContextService = Scope.ServiceProvider.GetRequiredService<StoreDbContext>();
 
             // Check for pending migrations and apply them if any before seeding data to avoid conflicts
-            if (dbContextService.Database.GetPendingMigrations().Any())
+           var PendingMigrations= await dbContextService.Database.GetPendingMigrationsAsync();
+            if(PendingMigrations.Any())
             {
-                dbContextService.Database.Migrate();
+                await dbContextService.Database.MigrateAsync();
             }
             return app;
         }
 
-        public static WebApplication SeedDb(this WebApplication app)
+        public static async Task<WebApplication> SeedDbAsync(this WebApplication app)
         {
-            using var Scope = app.Services.CreateScope();
+           await using var Scope = app.Services.CreateAsyncScope();
 
             var DataIntilizerService = Scope.ServiceProvider.GetRequiredService<IDataIntilizer>();
-            DataIntilizerService.Intilize();
+            await DataIntilizerService.IntilizeAsync();
             return app;
         }
     }

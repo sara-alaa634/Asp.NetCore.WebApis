@@ -8,7 +8,7 @@ namespace Ecommerce.Domain.Contracts
 {
     public interface IDataIntilizer
     {
-        void Intilize();
+        Task IntilizeAsync();
         
     }
 }
