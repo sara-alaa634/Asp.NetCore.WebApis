@@ -63,9 +63,8 @@ namespace Ecommerce.Prisastance.Data.DataSeed
         {
             // FilePath
             //D:\Courses\Route Asp.net\videos\Web Api Asp.Net Core\ECommerce.Web\Ecommerce.Prisastance\Data\DataSeed\JsonFiles\
-            var filePath = @"..\ECommerce.Web\Ecommerce.Prisastance\Data\DataSeed\JsonFiles"+fileName;
-
-            if(!File.Exists(filePath)) throw new FileNotFoundException($"The File {fileName} Not Found in Path {filePath}");
+            var filePath = @"..\Ecommerce.Prisastance\Data\DataSeed\JsonFiles\"+fileName;
+            if (!File.Exists(filePath)) throw new FileNotFoundException($"The File {fileName} Not Found in Path {filePath}");
 
             try
             {

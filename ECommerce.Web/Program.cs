@@ -4,6 +4,7 @@ using Ecommerce.Prisastance.Data.DataSeed;
 using Ecommerce.Prisastance.Data.DbContexts;
 using Ecommerce.Prisastance.Reposatories;
 using Ecommerce.ServiceAbstraction;
+using Ecommerce.Services;
 using Ecommerce.Services.MappingProfiles;
 using ECommerce.Web.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +35,7 @@ namespace ECommerce.Web
 
             builder.Services.AddScoped<IDataIntilizer, DataIntilizer>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddScoped<IProductService, IProductService>();
+            builder.Services.AddScoped<IProductService, ProductsService>();
             builder.Services.AddAutoMapper(X => X.AddProfile<ProductProfile>());
 
             var app = builder.Build();

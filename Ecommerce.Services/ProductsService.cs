@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Services
 {
-    internal class ProductsService : IProductService
+    public class ProductsService : IProductService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
