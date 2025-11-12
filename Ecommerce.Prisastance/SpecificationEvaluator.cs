@@ -49,6 +49,12 @@ namespace Ecommerce.Prisastance
                     Query = Query.OrderByDescending(specification.OrderByDescinding);
                 }
 
+                // Apply Pagination
+
+                if (specification.IsPaginated)
+                {
+                    Query = Query.Skip(specification.Skip).Take(specification.Take);
+                }
 
 
 

@@ -11,6 +11,22 @@ namespace Ecommerce.Services.Spesifications
 {
     public class BaseSpecification<TEntity, TKey> : ISpecification<TEntity, TKey> where TEntity : BaseEntity<TKey>
     {
+        #region Pagination
+
+        public int Skip { get; private set; }
+
+        public int Take { get; private set; }
+
+        public bool IsPaginated { get; set; }
+
+        protected void ApplyPagination(int pageSize, int PageIndex)
+        {
+            IsPaginated = true;
+            Take = pageSize;
+            Skip = pageSize * (PageIndex - 1);
+        }
+        #endregion
+
 
         #region Sorting
 
@@ -46,7 +62,6 @@ namespace Ecommerce.Services.Spesifications
         //Method to add includes to property
         public ICollection<Expression<Func<TEntity, object>>> IncludeExpression { get; } = [];
 
-      
         protected void AddInclude(Expression<Func<TEntity, object>> includeExp)
         {
             IncludeExpression.Add(includeExp);
