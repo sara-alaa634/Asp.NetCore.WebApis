@@ -74,8 +74,6 @@ namespace Ecommerce.Prisastance.Data.DataSeed
                 {
                    await dbset.AddRangeAsync(Data);
                 }   
-
-
             }
             catch (Exception ex)
             {
