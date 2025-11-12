@@ -22,10 +22,11 @@ namespace Ecommerce.Presentation.Controllers
 
         #region Get All Products
         [HttpGet]
-        // BaseUrl/api/Products
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetAllProducts()
+        // BaseUrl/api/Products/brandId=1&typeId=2
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetAllProducts(int? brandID, int? typeId)
         {
-            var Products = await _productService.GetAllProductsAsync();
+            // ? make the ids can come and can not come
+            var Products = await _productService.GetAllProductsAsync(brandID, typeId);
             return Ok(Products);
         }
         #endregion

@@ -10,7 +10,7 @@ namespace Ecommerce.ServiceAbstraction
     //Data Transfer Object (DTO) for Product
     public interface IProductService
     {
-        Task<IEnumerable<ProductDTO>> GetAllProductsAsync();
+        Task<IEnumerable<ProductDTO>> GetAllProductsAsync(int? brandId, int? typeId);
 
         Task<ProductDTO?> GetProductByIdAsync(int id);
         Task<IEnumerable<BrandDTO>> GetAllBrandsAsync();

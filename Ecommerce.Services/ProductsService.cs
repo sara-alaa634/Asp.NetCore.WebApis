@@ -31,9 +31,9 @@ namespace Ecommerce.Services
 
         }
 
-        public async Task<IEnumerable<ProductDTO>> GetAllProductsAsync()
+        public async Task<IEnumerable<ProductDTO>> GetAllProductsAsync(int? brandId, int? typeId)
         {
-            var Spec=new ProductWithBrandAndTypeSepcification();
+            var Spec=new ProductWithBrandAndTypeSepcification(brandId,typeId);
 
             var Products= await _unitOfWork.GetReposatory<Product,int>().GetAllAsync(Spec);
 
