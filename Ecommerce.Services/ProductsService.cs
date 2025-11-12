@@ -3,6 +3,7 @@ using Ecommerce.Domain.Contracts;
 using Ecommerce.Domain.Entities.Products;
 using Ecommerce.ServiceAbstraction;
 using Ecommerce.Services.Spesifications;
+using Ecommerce.Shared;
 using Ecommerce.Shared.DTOS.ProductDTOS;
 using System;
 using System.Collections.Generic;
@@ -31,9 +32,9 @@ namespace Ecommerce.Services
 
         }
 
-        public async Task<IEnumerable<ProductDTO>> GetAllProductsAsync(int? brandId, int? typeId)
+        public async Task<IEnumerable<ProductDTO>> GetAllProductsAsync(ProductQueryParams queryParams)
         {
-            var Spec=new ProductWithBrandAndTypeSepcification(brandId,typeId);
+            var Spec=new ProductWithBrandAndTypeSepcification(queryParams);
 
             var Products= await _unitOfWork.GetReposatory<Product,int>().GetAllAsync(Spec);
 
