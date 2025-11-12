@@ -16,7 +16,7 @@ namespace Ecommerce.Shared
         private int _pageIndex = 1;
         public int PageIndex
         {
-            get { return _pageIndex= 1; }
+            get { return _pageIndex; }
             set { _pageIndex = (value <= 0) ? 1 : value; }
         }
 
