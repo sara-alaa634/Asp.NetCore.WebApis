@@ -12,6 +12,23 @@ namespace Ecommerce.Services.Spesifications
     public class BaseSpecification<TEntity, TKey> : ISpecification<TEntity, TKey> where TEntity : BaseEntity<TKey>
     {
 
+        #region Sorting
+
+        public Expression<Func<TEntity, object>> OrderBy { get; private set; }
+
+        public Expression<Func<TEntity, object>> OrderByDescinding { get; private set; }
+       
+        protected void AddOrderBy(Expression<Func<TEntity,object>> OrderByExpression)
+        {
+            OrderBy = OrderByExpression;
+        }
+
+        protected void AddOrderByDescinding(Expression<Func<TEntity, object>> OrderByDescendingExpression)
+        {
+            OrderByDescinding = OrderByDescendingExpression;
+        }
+        #endregion
+
         #region Where
 
         public Expression<Func<TEntity, bool>> Criteria { get; }
@@ -29,6 +46,7 @@ namespace Ecommerce.Services.Spesifications
         //Method to add includes to property
         public ICollection<Expression<Func<TEntity, object>>> IncludeExpression { get; } = [];
 
+      
         protected void AddInclude(Expression<Func<TEntity, object>> includeExp)
         {
             IncludeExpression.Add(includeExp);

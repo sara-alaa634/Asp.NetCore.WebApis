@@ -37,9 +37,21 @@ namespace Ecommerce.Prisastance
                     Query = specification.IncludeExpression.Aggregate(Query, (current, includeExp) => current.Include(includeExp));
                 }
 
+                // Apply Order By
+                if (specification.OrderBy is not null)
+                {
+                    Query = Query.OrderBy(specification.OrderBy);
+                }
+
+                // Apply Order By Descinding
+                if (specification.OrderByDescinding is not null)
+                {
+                    Query = Query.OrderByDescending(specification.OrderByDescinding);
+                }
 
 
-              
+
+
             }
 
             return Query;
@@ -48,3 +60,5 @@ namespace Ecommerce.Prisastance
         }
     }
 }
+
+//_dbcontect.Products.Where().Include().OrderBy()
