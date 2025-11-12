@@ -20,19 +20,24 @@ namespace Ecommerce.Prisastance
 
             if (specification is not null)
             {
+
+
+                // Apply Where
+                if (specification.Criteria is not null)
+                {
+                    Query = Query.Where(specification.Criteria);
+                }
+
+
+                // Apply Include
                 if (specification.IncludeExpression is not null && specification.IncludeExpression.Any())
                 {
-                    //// Inject for Include
-                    //foreach (var includeExp in specification.IncludeExpression)
-                    //{
-                    //    Query = Query.Include(includeExp);
-                    //    //_dbcontect.Products.include(......)
-
-                    //}
 
                     // can use aggregate 
                     Query = specification.IncludeExpression.Aggregate(Query, (current, includeExp) => current.Include(includeExp));
                 }
+
+
 
               
             }

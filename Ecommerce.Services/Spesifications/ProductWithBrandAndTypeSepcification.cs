@@ -9,7 +9,13 @@ namespace Ecommerce.Services.Spesifications
 {
     public class ProductWithBrandAndTypeSepcification:BaseSpecification<Product, int>
     {
-        public ProductWithBrandAndTypeSepcification():base()
+        public ProductWithBrandAndTypeSepcification():base(null)
+        {
+            AddInclude(P => P.ProductBrands);
+            AddInclude(P => P.ProductTypes);
+        }
+
+        public ProductWithBrandAndTypeSepcification(int id):base(p => p.Id == id)
         {
             AddInclude(P => P.ProductBrands);
             AddInclude(P => P.ProductTypes);
