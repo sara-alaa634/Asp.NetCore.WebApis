@@ -24,7 +24,7 @@ namespace Ecommerce.Presentation.Controllers
         #region Get All Products
         [HttpGet]
         // BaseUrl/api/Products/brandId=1&typeId=2
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetAllProducts([FromQuery] ProductQueryParams queryParams)
+        public async Task<ActionResult<PaginatedResult<ProductDTO>>> GetAllProducts([FromQuery] ProductQueryParams queryParams)
         {
             // ? make the ids can come and can not come
             var Products = await _productService.GetAllProductsAsync(queryParams);
