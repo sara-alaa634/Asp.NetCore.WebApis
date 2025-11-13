@@ -1,12 +1,20 @@
 
+using Ecommerce.Domain.Contracts;
+using Ecommerce.Prisastance.Data.DataSeed;
 using Ecommerce.Prisastance.Data.DbContexts;
+using Ecommerce.Prisastance.Reposatories;
+using Ecommerce.ServiceAbstraction;
+using Ecommerce.Services;
+using Ecommerce.Services.MappingProfiles;
+using ECommerce.Web.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace ECommerce.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +33,20 @@ namespace ECommerce.Web
                     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
                 });
 
+            builder.Services.AddScoped<IDataIntilizer, DataIntilizer>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IProductService, ProductsService>();
+            builder.Services.AddAutoMapper(X => X.AddProfile<ProductProfile>());
+
             var app = builder.Build();
+
+            #region Data Seed
+
+           await app.MigrateDbAsunc();  // check migration first then seed data 
+           await app.SeedDbAsync();
+
+
+            #endregion
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
