@@ -49,7 +49,7 @@ namespace ECommerce.Web
 
             builder.Services.AddScoped<IBasketRepo, BasketReposatory>();
            
-
+            builder.Services.AddScoped<IBasketService, BasketService>();
 
             var app = builder.Build();
 
