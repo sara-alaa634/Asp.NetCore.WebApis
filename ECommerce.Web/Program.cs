@@ -37,12 +37,18 @@ namespace ECommerce.Web
             builder.Services.AddScoped<IDataIntilizer, DataIntilizer>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IProductService, ProductsService>();
+
             builder.Services.AddAutoMapper(X => X.AddProfile<ProductProfile>());
+
+            builder.Services.AddAutoMapper(X => X.AddProfile<BasketProfile>());
             builder.Services.AddSingleton<IConnectionMultiplexer>(O =>
             {
                 return ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")!);
 
             });
+
+            builder.Services.AddScoped<IBasketRepo, BasketReposatory>();
+           
 
 
             var app = builder.Build();
