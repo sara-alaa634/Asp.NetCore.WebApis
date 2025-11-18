@@ -39,8 +39,11 @@ namespace Ecommerce.Presentation.Controllers
         //BaseUrl/api/Products/1
         public async Task<ActionResult<ProductDTO>> GetProductById(int id)
         {
-            var Product = await _productService.GetProductByIdAsync(id);
-            return Ok(Product);
+           
+                var Product = await _productService.GetProductByIdAsync(id);
+                return Ok(Product);
+            
+          
         }
         #endregion
 

@@ -65,7 +65,32 @@ namespace ECommerce.Web
 
             #endregion
 
+
+
             // Configure the HTTP request pipeline.
+
+
+            //Exceptions Here
+            app.Use(async (Context, Next) =>
+            {
+                try
+                {
+                    await Next.Invoke();
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine(ex.Message);
+                    Context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                    await Context.Response.WriteAsJsonAsync(new
+                    {
+                        StatusCode=StatusCodes.Status500InternalServerError,
+                          Error=$"An Unexpected error occured : {ex.Message}"
+
+                    });
+                }
+            });
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
