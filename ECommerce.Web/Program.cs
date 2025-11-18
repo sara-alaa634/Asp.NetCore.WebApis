@@ -6,6 +6,7 @@ using Ecommerce.Prisastance.Reposatories;
 using Ecommerce.ServiceAbstraction;
 using Ecommerce.Services;
 using Ecommerce.Services.MappingProfiles;
+using ECommerce.Web.CustomMiddlewares;
 using ECommerce.Web.Extensions;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
@@ -71,25 +72,8 @@ namespace ECommerce.Web
 
 
             //Exceptions Here
-            app.Use(async (Context, Next) =>
-            {
-                try
-                {
-                    await Next.Invoke();
-                }
-                catch (Exception ex)
-                {
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
-                    Console.WriteLine(ex.Message);
-                    Context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                    await Context.Response.WriteAsJsonAsync(new
-                    {
-                        StatusCode=StatusCodes.Status500InternalServerError,
-                          Error=$"An Unexpected error occured : {ex.Message}"
-
-                    });
-                }
-            });
 
             if (app.Environment.IsDevelopment())
             {
