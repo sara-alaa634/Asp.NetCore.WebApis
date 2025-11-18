@@ -8,6 +8,8 @@ using Ecommerce.Services;
 using Ecommerce.Services.MappingProfiles;
 using ECommerce.Web.CustomMiddlewares;
 using ECommerce.Web.Extensions;
+using ECommerce.Web.Factories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 using System.Threading.Tasks;
@@ -56,6 +58,12 @@ namespace ECommerce.Web
 
             builder.Services.AddScoped<ICacheService, CacheService>();
 
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = ApiResponseFactory.CreateApiValidationResponse;
+              
+            });
+
             var app = builder.Build();
 
             #region Data Seed
@@ -73,6 +81,8 @@ namespace ECommerce.Web
 
             //Exceptions Here
             app.UseMiddleware<ExceptionHandlerMiddleware>();
+
+
 
 
             if (app.Environment.IsDevelopment())

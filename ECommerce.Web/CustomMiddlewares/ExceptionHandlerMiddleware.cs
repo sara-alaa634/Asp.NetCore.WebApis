@@ -19,7 +19,7 @@ namespace ECommerce.Web.CustomMiddlewares
             _logger = logger;
         }
 
-        public async Task InvoceAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context)
         {
 			try
             {
