@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Ecommerce.Services.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace ECommerce.Web.CustomMiddlewares
@@ -21,40 +22,50 @@ namespace ECommerce.Web.CustomMiddlewares
         public async Task InvoceAsync(HttpContext context)
         {
 			try
-			{
+            {
                 await _next.Invoke(context);
-                // 4040 NotFound
-                if(context.Response.StatusCode == StatusCodes.Status404NotFound)
-                {
-                    var Problem = new ProblemDetails()
-                    {
-                        Title = "Resource Not Found",
-                        Status = StatusCodes.Status404NotFound,
-                        Detail = "The Resourse You Are Looking For Is Not Found",
-                        Instance = context.Request.Path // URL
-                    };
-                    await context.Response.WriteAsJsonAsync(Problem);
-                }
+                await HandleNotFoundEndpointAsync(context);
             }
-			catch (Exception ex)
+            catch (Exception ex)
 			{
 
                //Logger
                //Logger Message to COnsole
                _logger.LogError(ex, $"Something went wrong");
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 var Problem = new ProblemDetails()
                 {
                     Title = "An Unexpected Error Occured",
-                    Status = StatusCodes.Status500InternalServerError,
                     Detail = ex.Message,
-                    Instance = context.Request.Path // URL
+                    Instance = context.Request.Path ,// URL
 
+                    Status = ex switch
+                    {
+                        NotFoundException=> StatusCodes.Status404NotFound,
+                        _ => StatusCodes.Status500InternalServerError
+                    }
                 };
+
+                context.Response.StatusCode = Problem.Status.Value;
 
                 await context.Response.WriteAsJsonAsync(Problem);
 
 
+            }
+        }
+
+        private static async Task HandleNotFoundEndpointAsync(HttpContext context)
+        {
+            // 4040 NotFound
+            if (context.Response.StatusCode == StatusCodes.Status404NotFound)
+            {
+                var Problem = new ProblemDetails()
+                {
+                    Title = "Resource Not Found",
+                    Status = StatusCodes.Status404NotFound,
+                    Detail = "The Resourse You Are Looking For Is Not Found",
+                    Instance = context.Request.Path // URL
+                };
+                await context.Response.WriteAsJsonAsync(Problem);
             }
         }
     }
