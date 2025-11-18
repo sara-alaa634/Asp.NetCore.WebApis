@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Prisastance.Reposatories
 {
-    internal class CacheReposatory : ICacheReposatory
+    public class CacheReposatory : ICacheReposatory
     {
         private readonly IDatabase _database;
 

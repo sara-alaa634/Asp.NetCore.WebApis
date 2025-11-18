@@ -51,6 +51,10 @@ namespace ECommerce.Web
            
             builder.Services.AddScoped<IBasketService, BasketService>();
 
+            builder.Services.AddScoped<ICacheReposatory, CacheReposatory>();
+
+            builder.Services.AddScoped<ICacheService, CacheService>();
+
             var app = builder.Build();
 
             #region Data Seed
