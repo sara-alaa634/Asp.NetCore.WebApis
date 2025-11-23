@@ -2,6 +2,7 @@
 using Ecommerce.Domain.Contracts;
 using Ecommerce.Prisastance.Data.DataSeed;
 using Ecommerce.Prisastance.Data.DbContexts;
+using Ecommerce.Prisastance.IdentityData.DbContexts;
 using Ecommerce.Prisastance.Reposatories;
 using Ecommerce.ServiceAbstraction;
 using Ecommerce.Services;
@@ -23,7 +24,6 @@ namespace ECommerce.Web
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -64,12 +64,22 @@ namespace ECommerce.Web
               
             });
 
+            // Dependency Ijection
+            builder.Services.AddDbContext<StoreIdentityDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
+
+                //Add-Migration "IdentityTableCreate" -OutputDir "Identity/Migrations" -Context "StoreIdentityDbContext"
+            });
+
             var app = builder.Build();
 
             #region Data Seed
 
            await app.MigrateDbAsunc();  // check migration first then seed data 
-           await app.SeedDbAsync();
+            await app.MigrateIdentityDbAsunc();  
+
+            await app.SeedDbAsync();
 
 
             #endregion

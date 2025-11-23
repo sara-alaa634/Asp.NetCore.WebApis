@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Domain.Contracts;
 using Ecommerce.Prisastance.Data.DbContexts;
+using Ecommerce.Prisastance.IdentityData.DbContexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Web.Extensions
@@ -20,6 +21,21 @@ namespace ECommerce.Web.Extensions
             }
             return app;
         }
+
+        public static async Task<WebApplication> MigrateIdentityDbAsunc(this WebApplication app)
+        {
+            await using var Scope = app.Services.CreateAsyncScope();
+            var dbContextService = Scope.ServiceProvider.GetRequiredService<StoreIdentityDbContext>();
+
+            // Check for pending migrations and apply them if any before seeding data to avoid conflicts
+            var PendingMigrations = await dbContextService.Database.GetPendingMigrationsAsync();
+            if (PendingMigrations.Any())
+            {
+                await dbContextService.Database.MigrateAsync();
+            }
+            return app;
+        }
+
 
         public static async Task<WebApplication> SeedDbAsync(this WebApplication app)
         {
