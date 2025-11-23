@@ -85,6 +85,9 @@ namespace ECommerce.Web
         builder.Services.AddIdentityCore<ApplicationUser>()
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<StoreIdentityDbContext>();
+
+
+            builder.Services.AddScoped<IAuthService, AuthenticationService>();
             var app = builder.Build();
 
             #region Data Seed
@@ -97,7 +100,7 @@ namespace ECommerce.Web
 
             #endregion
 
-
+             
 
             // Configure the HTTP request pipeline.
 
