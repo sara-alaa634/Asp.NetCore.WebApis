@@ -41,10 +41,19 @@ namespace ECommerce.Web.Extensions
         {
            await using var Scope = app.Services.CreateAsyncScope();
 
-            var DataIntilizerService = Scope.ServiceProvider.GetRequiredService<IDataIntilizer>();
+            var DataIntilizerService = Scope.ServiceProvider.GetRequiredKeyedService<IDataIntilizer>("Default");
             await DataIntilizerService.IntilizeAsync();
             return app;
         }
+        public static async Task<WebApplication> SeedIdentityDbAsync(this WebApplication app)
+        {
+            await using var Scope = app.Services.CreateAsyncScope();
+
+            var DataIntilizerService = Scope.ServiceProvider.GetRequiredKeyedService<IDataIntilizer>("Identity");
+            await DataIntilizerService.IntilizeAsync();
+            return app;
+        }
+
     }
 
 

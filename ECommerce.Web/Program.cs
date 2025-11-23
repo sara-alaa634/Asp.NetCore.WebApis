@@ -1,5 +1,6 @@
 
 using Ecommerce.Domain.Contracts;
+using Ecommerce.Domain.Entities.IdentityModule;
 using Ecommerce.Prisastance.Data.DataSeed;
 using Ecommerce.Prisastance.Data.DbContexts;
 using Ecommerce.Prisastance.IdentityData.DbContexts;
@@ -10,6 +11,7 @@ using Ecommerce.Services.MappingProfiles;
 using ECommerce.Web.CustomMiddlewares;
 using ECommerce.Web.Extensions;
 using ECommerce.Web.Factories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
@@ -37,7 +39,10 @@ namespace ECommerce.Web
                     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
                 });
 
-            builder.Services.AddScoped<IDataIntilizer, DataIntilizer>();
+            builder.Services.AddKeyedScoped<IDataIntilizer, DataIntilizer>("Default");
+            builder.Services.AddKeyedScoped<IDataIntilizer, IdenttiyDataIntailizer>("Identity");
+
+
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IProductService, ProductsService>();
 
@@ -72,14 +77,22 @@ namespace ECommerce.Web
                 //Add-Migration "IdentityTableCreate" -OutputDir "Identity/Migrations" -Context "StoreIdentityDbContext"
             });
 
+            //builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+            //    .AddEntityFrameworkStores<StoreIdentityDbContext>();
+
+
+            //new way to add identity core this equal the above but this faster
+        builder.Services.AddIdentityCore<ApplicationUser>()
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<StoreIdentityDbContext>();
             var app = builder.Build();
 
             #region Data Seed
 
            await app.MigrateDbAsunc();  // check migration first then seed data 
-            await app.MigrateIdentityDbAsunc();  
-
+            await app.MigrateIdentityDbAsunc();
             await app.SeedDbAsync();
+            await app.SeedIdentityDbAsync();
 
 
             #endregion
