@@ -77,5 +77,9 @@ namespace Ecommerce.Shared.CommanResult
         public static Result<TValue> Ok(TValue value) => new Result<TValue>(value);
         public static new Result<TValue> Fail(Error error) => new Result<TValue>(error);
         public static new Result<TValue> Fail(List<Error> errors) => new Result<TValue>(errors);
+
+        // Implcit Casting
+        public static implicit operator Result<TValue>(TValue value) => Ok(value);
+        public static implicit operator Result<TValue>(Error error) => Fail(error);
     }
 }

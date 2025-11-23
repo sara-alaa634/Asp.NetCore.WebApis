@@ -56,7 +56,7 @@ namespace ECommerce.Web.CustomMiddlewares
         private static async Task HandleNotFoundEndpointAsync(HttpContext context)
         {
             // 4040 NotFound
-            if (context.Response.StatusCode == StatusCodes.Status404NotFound)
+            if (context.Response.StatusCode == StatusCodes.Status404NotFound && !context.Response.HasStarted)
             {
                 var Problem = new ProblemDetails()
                 {
