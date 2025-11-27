@@ -1,9 +1,27 @@
 
+using Ecommerce.Domain.Contracts;
+using Ecommerce.Domain.Entities.IdentityModule;
+using Ecommerce.Prisastance.Data.DataSeed;
+using Ecommerce.Prisastance.Data.DbContexts;
+using Ecommerce.Prisastance.IdentityData.DbContexts;
+using Ecommerce.Prisastance.Reposatories;
+using Ecommerce.ServiceAbstraction;
+using Ecommerce.Services;
+using Ecommerce.Services.MappingProfiles;
+using ECommerce.Web.CustomMiddlewares;
+using ECommerce.Web.Extensions;
+using ECommerce.Web.Factories;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
+using System.Threading.Tasks;
+
 namespace ECommerce.Web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +32,85 @@ namespace ECommerce.Web
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<StoreDbContext>(
+                options =>
+                {
+                    //Connection String
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                });
+
+            builder.Services.AddKeyedScoped<IDataIntilizer, DataIntilizer>("Default");
+            builder.Services.AddKeyedScoped<IDataIntilizer, IdenttiyDataIntailizer>("Identity");
+
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IProductService, ProductsService>();
+
+            builder.Services.AddAutoMapper(X => X.AddProfile<ProductProfile>());
+
+            builder.Services.AddAutoMapper(X => X.AddProfile<BasketProfile>());
+            builder.Services.AddSingleton<IConnectionMultiplexer>(O =>
+            {
+                return ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")!);
+
+            });
+
+            builder.Services.AddScoped<IBasketRepo, BasketReposatory>();
+           
+            builder.Services.AddScoped<IBasketService, BasketService>();
+
+            builder.Services.AddScoped<ICacheReposatory, CacheReposatory>();
+
+            builder.Services.AddScoped<ICacheService, CacheService>();
+
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = ApiResponseFactory.CreateApiValidationResponse;
+              
+            });
+
+            // Dependency Ijection
+            builder.Services.AddDbContext<StoreIdentityDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
+
+                //Add-Migration "IdentityTableCreate" -OutputDir "Identity/Migrations" -Context "StoreIdentityDbContext"
+            });
+
+            //builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+            //    .AddEntityFrameworkStores<StoreIdentityDbContext>();
+
+
+            //new way to add identity core this equal the above but this faster
+        builder.Services.AddIdentityCore<ApplicationUser>()
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<StoreIdentityDbContext>();
+
+
+            builder.Services.AddScoped<IAuthService, AuthenticationService>();
             var app = builder.Build();
 
+            #region Data Seed
+
+           await app.MigrateDbAsunc();  // check migration first then seed data 
+            await app.MigrateIdentityDbAsunc();
+            await app.SeedDbAsync();
+            await app.SeedIdentityDbAsync();
+
+
+            #endregion
+
+             
+
             // Configure the HTTP request pipeline.
+
+
+            //Exceptions Here
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
+
+
+
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
