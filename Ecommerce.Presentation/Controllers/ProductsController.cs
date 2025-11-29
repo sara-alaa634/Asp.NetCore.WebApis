@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Presentation.Controllers
 {
-   
     public class ProductsController : ApiBaseController
     {
         private readonly IProductService _productService;
@@ -23,6 +22,7 @@ namespace Ecommerce.Presentation.Controllers
         }
 
         #region Get All Products
+        
         [Authorize]
         [HttpGet]
         [RadisCache]

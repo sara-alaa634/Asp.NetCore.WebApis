@@ -11,9 +11,11 @@ using Ecommerce.Services.MappingProfiles;
 using ECommerce.Web.CustomMiddlewares;
 using ECommerce.Web.Extensions;
 using ECommerce.Web.Factories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Threading.Tasks;
 
@@ -88,6 +90,26 @@ namespace ECommerce.Web
 
 
             builder.Services.AddScoped<IAuthService, AuthenticationService>();
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;  // Auth
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // unAuth
+            }).AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters() { 
+                     ValidateIssuer=true,
+                     ValidateAudience=true,
+                    ValidIssuer = builder.Configuration["JWTOptions:Issuer"],
+                    ValidAudience = builder.Configuration["JWTOptions:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWTOptions:SecretKey"]!))
+
+                };
+
+            });
+
+
             var app = builder.Build();
 
             #region Data Seed
@@ -119,6 +141,7 @@ namespace ECommerce.Web
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
