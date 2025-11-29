@@ -2,6 +2,7 @@
 using Ecommerce.ServiceAbstraction;
 using Ecommerce.Shared;
 using Ecommerce.Shared.DTOS.ProductDTOS;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ namespace Ecommerce.Presentation.Controllers
         }
 
         #region Get All Products
+        [Authorize]
         [HttpGet]
         [RadisCache]
         // BaseUrl/api/Products/brandId=1&typeId=2
