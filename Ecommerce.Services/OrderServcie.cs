@@ -3,6 +3,7 @@ using Ecommerce.Domain.Contracts;
 using Ecommerce.Domain.Entities.Orders;
 using Ecommerce.Domain.Entities.Products;
 using Ecommerce.ServiceAbstraction;
+using Ecommerce.Services.Spesifications;
 using Ecommerce.Shared.CommanResult;
 using Ecommerce.Shared.DTOS.OrderDTOS;
 using System;
@@ -73,6 +74,44 @@ namespace Ecommerce.Services
                 Quantity = item.Quantity
 
             };
+        }
+
+        public async Task<Result<IEnumerable<OrderToReturnDTO>>> GetAllOrdersAsync(string Email)
+        {
+            var Spec=new OrderSpesifications(Email);
+            var Orders = await _unitOfWork.GetReposatory<Order, Guid>()
+                .GetAllAsync(Spec);
+            if (!Orders.Any())
+            {
+                return Error.NotFound("No Orders Found for this user!");
+            }
+            var Data=_mapper.Map<IEnumerable<OrderToReturnDTO>>(Orders);
+            return Result<IEnumerable<OrderToReturnDTO>>.Ok(Data);
+        }
+
+        public async Task<Result<IEnumerable<DeliveryMethodDTO>>> GetDeliveryMethods()
+        {
+            var deliveryMethods = await _unitOfWork.GetReposatory<DeliveryMethod, int>().GetAllAsync();
+            if (deliveryMethods.Any())
+            {
+                return Error.NotFound("No Delivery Methods Found!");
+            }
+
+            var Data=_mapper.Map<IEnumerable<DeliveryMethod>,IEnumerable<DeliveryMethodDTO>>(deliveryMethods);
+
+            return Result<IEnumerable<DeliveryMethodDTO>>.Ok(Data);
+
+        }
+
+        public async Task<Result<OrderToReturnDTO>> GetOrderByIdAsync(Guid orderId, string Email)
+        {
+            var Spec=new OrderSpesifications(orderId, Email);
+            var Order =await  _unitOfWork.GetReposatory<Order, Guid>()
+                .GetByIdAsync(Spec);
+            if(Order is null)
+                return Error.NotFound("Order Not Found");
+
+            return _mapper.Map<OrderToReturnDTO>(Order);
         }
     }
 }
