@@ -12,7 +12,8 @@ namespace Ecommerce.Domain.Entities.Orders
         public string UserEmail { get; set; } = null!;
         public DateTimeOffset OrderDate { get; set; } = DateTimeOffset.Now;
         public OrederAddress Address { get; set; }
-        [ForeignKey("DeliryMethod")]
+       
+        [ForeignKey("DeliveryMethod")]
         public int DeliveryMethodId { get; set; }
         public DeliveryMethod DeliveryMethod { get; set; }
         public OrderStatus OrderStatus { get; set; }

@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Domain.Contracts;
 using Ecommerce.Domain.Entities;
+using Ecommerce.Domain.Entities.Orders;
 using Ecommerce.Domain.Entities.Products;
 using Ecommerce.Prisastance.Data.DbContexts;
 using Microsoft.EntityFrameworkCore;
@@ -29,12 +30,12 @@ namespace Ecommerce.Prisastance.Data.DataSeed
                 var HasProducts=await _dbContext.Products.AnyAsync();
                 var HasProductBrands=await _dbContext.ProductBrands.AnyAsync();
                 var HasProductTypes=await _dbContext.ProductTypes.AnyAsync();
+                var HasDelivery = await _dbContext.Set<DeliveryMethod>().AnyAsync();
 
-                if(HasProducts && HasProductBrands && HasProductTypes )
-                {
+
+                if(HasProducts && HasProductBrands && HasProductTypes && HasDelivery)
                     return;
-                }
-               
+
                 if (!HasProductBrands)
                 {
                     await SeedDataFromJsonAsync<ProductBrand,int>("brands.json", _dbContext.ProductBrands);
@@ -49,6 +50,11 @@ namespace Ecommerce.Prisastance.Data.DataSeed
                 {
                     await SeedDataFromJsonAsync<Product, int>("products.json", _dbContext.Products);
                 }
+                if (!HasDelivery){
+                    await SeedDataFromJsonAsync<DeliveryMethod, int>("delivery.json", _dbContext.Set<DeliveryMethod>());
+
+                }
+                
 
                 _dbContext.SaveChanges();
             }
