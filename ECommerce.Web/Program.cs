@@ -51,6 +51,8 @@ namespace ECommerce.Web
             builder.Services.AddAutoMapper(X => X.AddProfile<ProductProfile>());
 
             builder.Services.AddAutoMapper(X => X.AddProfile<BasketProfile>());
+
+            builder.Services.AddAutoMapper(X => X.AddProfile<OrderProfile>());
             builder.Services.AddSingleton<IConnectionMultiplexer>(O =>
             {
                 return ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnection")!);
@@ -64,6 +66,8 @@ namespace ECommerce.Web
             builder.Services.AddScoped<ICacheReposatory, CacheReposatory>();
 
             builder.Services.AddScoped<ICacheService, CacheService>();
+            builder.Services.AddScoped<IOrderService, OrderServcie>();
+
 
             builder.Services.Configure<ApiBehaviorOptions>(options =>
             {
