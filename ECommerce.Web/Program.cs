@@ -48,6 +48,8 @@ namespace ECommerce.Web
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IProductService, ProductsService>();
 
+
+
             builder.Services.AddAutoMapper(X => X.AddProfile<ProductProfile>());
 
             builder.Services.AddAutoMapper(X => X.AddProfile<BasketProfile>());
@@ -67,6 +69,8 @@ namespace ECommerce.Web
 
             builder.Services.AddScoped<ICacheService, CacheService>();
             builder.Services.AddScoped<IOrderService, OrderServcie>();
+
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 
             builder.Services.Configure<ApiBehaviorOptions>(options =>
