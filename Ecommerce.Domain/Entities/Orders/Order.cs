@@ -22,5 +22,7 @@ namespace Ecommerce.Domain.Entities.Orders
 
         public decimal GetTotal() => SubTotal + DeliveryMethod.Price;
 
+        public string? PaymentIntentId { get; set; }
+
     }
 }

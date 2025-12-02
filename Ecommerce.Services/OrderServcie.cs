@@ -31,6 +31,19 @@ namespace Ecommerce.Services
             var orderAddress = _mapper.Map<OrederAddress>(orderDTO.Address);
             var basket = await _basketRepo.GetBasketAsync(orderDTO.BasketId);
             if (basket == null) return Error.NotFound("Basket not found!");
+
+            // Paymet
+            ArgumentNullException.ThrowIfNullOrEmpty(basket.PaymendIntentId);
+            var OrderRepo = _unitOfWork.GetReposatory<Order, Guid>();
+            // Spesification
+            var Spec = new OrderWithPaymentIntentSpesification(basket.PaymendIntentId);
+            var ExsistOrder = await OrderRepo.GetByIdAsync(Spec);
+
+            if (ExsistOrder is not null) OrderRepo.Remove(ExsistOrder);
+
+
+
+
             List<OrderItem> orderItems = new List<OrderItem>();
             foreach (var item in basket.Items)
             {
@@ -50,13 +63,13 @@ namespace Ecommerce.Services
                 Address = orderAddress,
                 DeliveryMethod = DeliveryMethod,
                 Items = orderItems,
-                SubTotal = subtotal
+                SubTotal = subtotal,
+                PaymentIntentId=basket.PaymendIntentId
             };
             await _unitOfWork.GetReposatory<Order, Guid>().AddAsync(order);
             var result = await _unitOfWork.SaveChangesAsync();
             if (result <= 0) return Error.Failure("Failed to create order!");
             return _mapper.Map<OrderToReturnDTO>(order);
-
 
         }
 
